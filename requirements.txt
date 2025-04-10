@@ -1,6 +1,6 @@
 streamlit
-openai
 transformers
 torch
 speechrecognition
 gtts
+pyaudio ; platform_system != 'Linux'
