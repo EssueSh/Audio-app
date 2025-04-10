@@ -3,4 +3,4 @@ transformers
 torch
 speechrecognition
 gtts
-pyaudio ; platform_system != 'Linux'
+pyaudio 
