@@ -1,6 +1,6 @@
 streamlit
+openai
 transformers
-requests
-pyttsx3
-speechrecognition
 pyaudio
+speechrecognition
+gtts
