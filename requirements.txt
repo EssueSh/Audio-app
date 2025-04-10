@@ -1,7 +1,6 @@
 streamlit
 transformers
-torch
-speechrecognition
 gtts
-pydub
-streamlit-audio-recorder
+speechrecognition
+streamlit-mic-recorder
+torch
