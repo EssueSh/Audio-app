@@ -1,32 +1,48 @@
 import streamlit as st
-import requests
+import speech_recognition as sr
+from gtts import gTTS
+import os
+import tempfile
 from transformers import pipeline
 
-# Initialize the QA model
-qa_pipeline = pipeline("question-answering", model="distilbert-base-uncased-distilled-squad")
+# Load the question-answering pipeline
+qa_pipeline = pipeline("question-answering", model="distilbert-base-uncased")
 
-# Fetch top headlines (requires your NewsAPI key)
-def get_news(api_key):
-    url = f"https://newsapi.org/v2/top-headlines?language=en&category=general&pageSize=5&apiKey={news_api_key}"
-    response = requests.get(url)
-    articles = response.json().get("articles", [])
-    return " ".join([article["title"] + ". " + article.get("description", "") for article in articles])
+st.title("🎙️ Audio Assistant")
+st.write("Ask your question through your voice!")
 
-st.title("🗞️ World News Q&A Assistant")
+# Speech-to-text
+def recognize_speech():
+    recognizer = sr.Recognizer()
+    mic = sr.Microphone()
+    with mic as source:
+        st.info("Listening...")
+        recognizer.adjust_for_ambient_noise(source)
+        audio = recognizer.listen(source)
+    try:
+        st.success("Audio received!")
+        return recognizer.recognize_google(audio)
+    except sr.UnknownValueError:
+        st.error("Sorry, could not understand your audio.")
+        return None
+    except sr.RequestError:
+        st.error("Could not request results. Check your internet connection.")
+        return None
 
-news_api_key = st.text_input("🔑 Enter your NewsAPI Key", type="password")
+# Text-to-speech
+def speak(text):
+    tts = gTTS(text=text, lang='en')
+    with tempfile.NamedTemporaryFile(delete=True, suffix=".mp3") as fp:
+        tts.save(fp.name)
+        os.system(f"mpg123 {fp.name}" if os.name != 'nt' else f"start {fp.name}")
 
-if news_api_key:
-    with st.spinner("Fetching latest news..."):
-        context = get_news(news_api_key)
-
-    st.success("News loaded successfully.")
-    st.subheader("Ask a question about the latest news:")
-    question = st.text_input("🧠 Your Question")
-
+# Run voice assistant
+if st.button("🎤 Start Listening"):
+    question = recognize_speech()
     if question:
-        with st.spinner("Thinking..."):
-            result = qa_pipeline(question=question, context=context)
-        st.markdown(f"**Answer:** {result['answer']}")
-else:
-    st.info("Please enter your NewsAPI key to start.")
+        st.write(f"**You asked:** {question}")
+        context = "This is a general-purpose assistant. It answers questions based on its knowledge of language and facts."  # Use real context for better answers
+        result = qa_pipeline(question=question, context=context)
+        answer = result["answer"]
+        st.success(f"🤖 Answer: {answer}")
+        speak(answer)
