@@ -3,4 +3,5 @@ transformers
 torch
 speechrecognition
 gtts
-pyaudio 
+pydub
+streamlit-audio-recorder
