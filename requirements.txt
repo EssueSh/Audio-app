@@ -1,6 +1,6 @@
 streamlit
-transformers
-gtts
-speechrecognition
 streamlit-mic-recorder
-torch
+transformers==4.40.1
+torch==2.1.0
+gTTS==2.5.1
+SpeechRecognition==3.10.1
