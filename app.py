@@ -7,7 +7,7 @@ qa_pipeline = pipeline("question-answering", model="distilbert-base-uncased-dist
 
 # Fetch top headlines (requires your NewsAPI key)
 def get_news(api_key):
-    url = f"https://newsapi.org/v2/top-headlines?language=en&category=general&pageSize=5&apiKey={d66a96ac55834aff916182230091ba73}"
+    url = f"https://newsapi.org/v2/top-headlines?language=en&category=general&pageSize=5&apiKey={news_api_key}"
     response = requests.get(url)
     articles = response.json().get("articles", [])
     return " ".join([article["title"] + ". " + article.get("description", "") for article in articles])
