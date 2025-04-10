@@ -1,6 +1,5 @@
 streamlit
 openai
 transformers
-pyaudio
 speechrecognition
 gtts
